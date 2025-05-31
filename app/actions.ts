@@ -1,7 +1,5 @@
 "use server"
 
-import { addEntry } from "@/lib/diary-store"
-
 export async function submitDiaryEntry(formData: FormData) {
   const content = formData.get("content") as string
   const mood = formData.get("mood") as string
@@ -16,14 +14,26 @@ export async function submitDiaryEntry(formData: FormData) {
   }
 
   try {
-    const newEntry = addEntry({
-      content: content.trim(),
-      mood,
-      location: location || "Anonymous location",
+    // Send the data to our API endpoint
+    const response = await fetch(`${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""}/api/entries`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: content.trim(),
+        mood,
+        location: location || "Anonymous location",
+      }),
     })
 
-    // Return the entry ID so the client can track it
-    return { success: true, entryId: newEntry.id }
+    const data = await response.json()
+
+    if (!response.ok) {
+      return { error: data.error || "Failed to save diary entry" }
+    }
+
+    return { success: true, entryId: data.entry.id }
   } catch (error) {
     return { error: "Failed to save diary entry. Please try again." }
   }

@@ -34,7 +34,7 @@ export default function DiaryPage() {
 
 const verifyPayload: VerifyCommandInput = {
 	action: 'chat', // This is your action ID from the Developer Portal
-	verification_level: VerificationLevel.Orb, // Orb | Device
+	verification_level: VerificationLevel.Device, // Orb | Device
 }
 
 const handleVerify = async () => {
@@ -68,17 +68,46 @@ const handleVerify = async () => {
 }
 
 
+  // const handleSubmit = async (formData: FormData) => {
+  //   if (!isVerified) {
+  //     console.log("User is not verified, initiating verification process")
+  //     handleVerify();
+  //     return
+  //   }
+  //   setIsSubmitting(true)
+  //   await submitDiaryEntry(formData)
+  //   setIsSubmitting(false)
+  //   router.push("/public")
+  // }
+
   const handleSubmit = async (formData: FormData) => {
     if (!isVerified) {
       console.log("User is not verified, initiating verification process")
-      handleVerify();
+      handleVerify()
       return
     }
+
     setIsSubmitting(true)
-    await submitDiaryEntry(formData)
-    setIsSubmitting(false)
-    router.push("/public")
+
+    try {
+      const result = await submitDiaryEntry(formData)
+
+      if (result?.success) {
+        // Clear form
+        setContent("")
+        setSelectedMood("")
+        setLocation("")
+
+        // Redirect to public page
+        router.push("/public")
+      }
+    } catch (error) {
+      console.error("Failed to submit entry:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
+
 
   const characterCount = content.length
   const maxCharacters = 1000
@@ -91,15 +120,15 @@ const handleVerify = async () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <BookOpen className="w-6 h-6 text-indigo-600" />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">My Diary</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">World Log</h1>
             </div>
             <div className="flex gap-2">
-              <Link href="/me">
+              {/* <Link href="/me">
                 <Button variant="outline" size="sm" className="gap-2">
                   <User className="w-4 h-4" />
                   Me
                 </Button>
-              </Link>
+              </Link> */}
               <Link href="/public">
                 <Button variant="outline" size="sm" className="gap-2">
                   <Globe className="w-4 h-4" />
@@ -197,7 +226,9 @@ const handleVerify = async () => {
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3"
                 disabled={isSubmitting || !content.trim() || !selectedMood}
               >
-                {isSubmitting ? "Sharing anonymously..." : "Share Anonymously"}
+              {isSubmitting ? "Sharing anonymously..." : !isVerified ? 
+              "Verify & Share" : "Share Anonymously"}
+                {/* {isSubmitting ? "Sharing anonymously..." : "Share Anonymously"} */}
               </Button>
             </form>
           </CardContent>
