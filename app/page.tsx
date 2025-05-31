@@ -68,24 +68,12 @@ const handleVerify = async () => {
 }
 
 
-  // const handleSubmit = async (formData: FormData) => {
-  //   if (!isVerified) {
-  //     console.log("User is not verified, initiating verification process")
-  //     handleVerify();
-  //     return
-  //   }
-  //   setIsSubmitting(true)
-  //   await submitDiaryEntry(formData)
-  //   setIsSubmitting(false)
-  //   router.push("/public")
-  // }
-
   const handleSubmit = async (formData: FormData) => {
-    // if (!isVerified) {
-    //   console.log("User is not verified, initiating verification process")
-    //   handleVerify()
-    //   return
-    // }
+    if (!isVerified) {
+      console.log("User is not verified, initiating verification process")
+      handleVerify()
+      return
+    }
 
     setIsSubmitting(true)
 
