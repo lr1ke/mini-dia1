@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -72,7 +73,7 @@ const handleVerify = async () => {
     if (!isVerified) {
       console.log("User is not verified, initiating verification process")
       handleVerify()
-      return
+      
     }
 
     setIsSubmitting(true)
