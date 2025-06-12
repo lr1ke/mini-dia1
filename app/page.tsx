@@ -34,7 +34,7 @@ export default function DiaryPage() {
 
 
 const verifyPayload: VerifyCommandInput = {
-	action: 'chat', // This is your action ID from the Developer Portal
+	action: 'publish', // This is your action ID from the Developer Portal
 	verification_level: VerificationLevel.Device, // Orb | Device
 }
 
@@ -56,7 +56,7 @@ const handleVerify = async () => {
 			},
 			body: JSON.stringify({
 			payload: finalPayload as ISuccessResult, // Parses only the fields we need to verify
-			action: 'chat',
+			action: 'publish',
 		}),
 	})
 
